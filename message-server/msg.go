@@ -22,10 +22,10 @@ type msgToHandleCommitPushed struct {
 	userAgent string
 }
 
-func (d *msgToHandleCommitPushed) toCmd(payload []byte, header map[string]string) (
+func (msg *msgToHandleCommitPushed) toCmd(payload []byte, header map[string]string) (
 	cmd app.CmdToSyncRepo, err error,
 ) {
-	eventType, err := d.parseRequest(header)
+	eventType, err := msg.parseRequest(header)
 	if err != nil {
 		err = fmt.Errorf("invalid msg, err:%s", err.Error())
 
@@ -40,13 +40,13 @@ func (d *msgToHandleCommitPushed) toCmd(payload []byte, header map[string]string
 
 	e := new(github.PushEvent)
 	if err = json.Unmarshal(payload, e); err == nil {
-		cmd, err = d.genCmd(e)
+		cmd, err = msg.genCmd(e)
 	}
 
 	return
 }
 
-func (d *msgToHandleCommitPushed) genCmd(e *github.PushEvent) (cmd app.CmdToSyncRepo, err error) {
+func (msg *msgToHandleCommitPushed) genCmd(e *github.PushEvent) (cmd app.CmdToSyncRepo, err error) {
 	repo := e.GetRepo()
 	cmd.Owner = repo.GetOwner().GetLogin()
 	cmd.Repo = repo.GetName()
@@ -61,7 +61,7 @@ func (d *msgToHandleCommitPushed) genCmd(e *github.PushEvent) (cmd app.CmdToSync
 	return
 }
 
-func (d *msgToHandleCommitPushed) parseRequest(header map[string]string) (
+func (msg *msgToHandleCommitPushed) parseRequest(header map[string]string) (
 	eventType string, err error,
 ) {
 	if header == nil {
@@ -70,7 +70,7 @@ func (d *msgToHandleCommitPushed) parseRequest(header map[string]string) (
 		return
 	}
 
-	if header[msgHeaderUserAgent] != d.userAgent {
+	if header[msgHeaderUserAgent] != msg.userAgent {
 		err = errors.New("unknown " + msgHeaderUserAgent)
 
 		return
