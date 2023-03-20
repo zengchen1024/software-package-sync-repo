@@ -40,12 +40,22 @@ func NewSyncService(
 }
 
 type syncService struct {
+	rl       repoLock
 	lock     synclock.RepoSyncLock
 	platform platform.Platform
 	syncrepo syncrepo.SyncRepo
 }
 
-func (s *syncService) SyncRepo(cmd *CmdToSyncRepo) error {
+func (s *syncService) SyncRepo(cmd *CmdToSyncRepo) (err error) {
+	if k := cmd.Owner + cmd.Repo; s.rl.tryLock(k) {
+		err = s.doSync(cmd)
+		s.rl.unlock(k)
+	}
+
+	return
+}
+
+func (s *syncService) doSync(cmd *CmdToSyncRepo) error {
 	repo := cmd.repoInfo()
 
 	info, err := s.lock.TryLock(&repo)

@@ -47,7 +47,7 @@ func gatherOptions(fs *flag.FlagSet, args ...string) options {
 	return o
 }
 
-const component = "xihe-sync-repo"
+const component = "software-pkg-sync-repo"
 
 func main() {
 	logrusutil.ComponentInit(component)

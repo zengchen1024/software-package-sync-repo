@@ -58,7 +58,7 @@ func (impl *serviceImpl) unsubscribe() {
 		if err := s[i].Unsubscribe(); err != nil {
 			logrus.Errorf(
 				"failed to unsubscribe to topic:%s, err:%v",
-				s[i].Topic, err,
+				s[i].Topic(), err,
 			)
 		}
 	}

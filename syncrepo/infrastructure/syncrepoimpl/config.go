@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-const repoEnpointPrefix = "https://"
+const repoEndpointPrefix = "https://"
 
 type Config struct {
 	WorkDir       string     `json:"work_dir"        required:"true"`
@@ -19,12 +19,12 @@ func (cfg *Config) Validate() error {
 
 // targetRepo
 type targetRepo struct {
-	Enpoint    string     `json:"endpoint"    required:"true"`
+	Endpoint   string     `json:"endpoint"    required:"true"`
 	Credential credential `json:"credential"  required:"true"`
 }
 
 func (t *targetRepo) validate() error {
-	if !strings.HasPrefix(t.Enpoint, repoEnpointPrefix) {
+	if !strings.HasPrefix(t.Endpoint, repoEndpointPrefix) {
 		return fmt.Errorf("unsupported protocol")
 	}
 
@@ -32,14 +32,14 @@ func (t *targetRepo) validate() error {
 }
 
 func (t *targetRepo) remoteURL() string {
-	e := strings.TrimSuffix(t.Enpoint, "/")
+	e := strings.TrimSuffix(t.Endpoint, "/")
 
 	return fmt.Sprintf(
 		"%s%s:%sxi@%s/",
-		repoEnpointPrefix,
+		repoEndpointPrefix,
 		t.Credential.UserName,
 		t.Credential.Token,
-		strings.TrimPrefix(e, repoEnpointPrefix),
+		strings.TrimPrefix(e, repoEndpointPrefix),
 	)
 }
 
