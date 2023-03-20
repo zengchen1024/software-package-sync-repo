@@ -46,7 +46,7 @@ func Subscriber() *serviceImpl {
 	return instance
 }
 
-type Handler func([]byte) error
+type Handler func([]byte, map[string]string) error
 
 type serviceImpl struct {
 	subscribers []mq.Subscriber
@@ -92,6 +92,6 @@ func (impl *serviceImpl) registerHandler(topic, group string, h Handler) (mq.Sub
 			return nil
 		}
 
-		return h(msg.Body)
+		return h(msg.Body, msg.Header)
 	})
 }

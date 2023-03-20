@@ -86,7 +86,10 @@ func main() {
 		syncrepoimpl.NewSyncRepo(&cfg.SyncRepo),
 	)
 
-	server := server{service}
+	server := server{
+		service:   service,
+		userAgent: cfg.Subscription.UserAgent,
+	}
 
 	kafka.Subscriber().Subscribe(
 		cfg.Subscription.Group,

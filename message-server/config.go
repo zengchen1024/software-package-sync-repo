@@ -58,8 +58,9 @@ func (cfg *configuration) setDefault() {
 
 // subscription
 type subscription struct {
-	Group string `json:"kafka"  required:"true"`
-	Topic string `json:"kafka"  required:"true"`
+	Group     string `json:"group"       required:"true"`
+	Topic     string `json:"topic"       required:"true"`
+	UserAgent string `json:"user_agent"  required:"true"`
 }
 
 func loadConfig(file string) (cfg configuration, err error) {

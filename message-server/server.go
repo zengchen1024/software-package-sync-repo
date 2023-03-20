@@ -1,32 +1,19 @@
 package main
 
-import (
-	"encoding/json"
-
-	"github.com/opensourceways/software-package-sync-repo/syncrepo/app"
-)
+import "github.com/opensourceways/software-package-sync-repo/syncrepo/app"
 
 type server struct {
-	service app.SyncService
+	service   app.SyncService
+	userAgent string
 }
 
-func (s *server) handleCommitPushed(data []byte) error {
-	msg := new(msgToHandleCommitPushed)
+func (s *server) handleCommitPushed(data []byte, header map[string]string) error {
+	msg := msgToHandleCommitPushed{s.userAgent}
 
-	if err := json.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	cmd, err := msg.toCmd()
+	cmd, err := msg.toCmd(data, header)
 	if err != nil {
 		return err
 	}
 
 	return s.service.SyncRepo(&cmd)
-}
-
-type msgToHandleCommitPushed struct{}
-
-func (msg *msgToHandleCommitPushed) toCmd() (cmd app.CmdToSyncRepo, err error) {
-	return
 }
