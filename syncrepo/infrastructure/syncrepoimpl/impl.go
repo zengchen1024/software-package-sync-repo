@@ -26,7 +26,7 @@ type syncRepo struct {
 	targetRepo string
 }
 
-func (impl *syncRepo) SyncRepo(origin *syncrepo.OriginRepo) (string, error) {
+func (impl *syncRepo) Sync(origin *syncrepo.OriginRepo) (string, error) {
 	params := []string{
 		impl.shell,
 		impl.workDir, lastCommitTag,

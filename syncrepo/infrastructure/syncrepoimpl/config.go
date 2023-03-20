@@ -24,7 +24,7 @@ type targetRepo struct {
 }
 
 func (t *targetRepo) validate() error {
-	if !strings.HasSuffix(t.Enpoint, repoEnpointPrefix) {
+	if !strings.HasPrefix(t.Enpoint, repoEnpointPrefix) {
 		return fmt.Errorf("unsupported protocol")
 	}
 
@@ -45,6 +45,6 @@ func (t *targetRepo) remoteURL() string {
 
 // credential
 type credential struct {
-	UserName string `json:"user_name"`
-	Token    string `json:"token"`
+	UserName string `json:"user_name"  required:"true"`
+	Token    string `json:"token"      required:"true"`
 }
