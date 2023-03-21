@@ -18,9 +18,8 @@ import (
 )
 
 type options struct {
-	service           liboptions.ServiceOptions
-	enableDebug       bool
-	kafkamqConfigFile string
+	service     liboptions.ServiceOptions
+	enableDebug bool
 }
 
 func (o *options) Validate() error {
@@ -31,11 +30,6 @@ func gatherOptions(fs *flag.FlagSet, args ...string) options {
 	var o options
 
 	o.service.AddFlags(fs)
-
-	fs.StringVar(
-		&o.kafkamqConfigFile, "kafkamq-config-file", "/etc/kafkamq/config.yaml",
-		"Path to the file containing config of kafkamq.",
-	)
 
 	fs.BoolVar(
 		&o.enableDebug, "enable_debug", false,
@@ -75,7 +69,9 @@ func main() {
 
 	// init kafka
 	if err := kafka.Init(&cfg.Kafka, log); err != nil {
-		logrus.Fatalf("init kafka failed, err:%s", err.Error())
+		logrus.Errorf("init kafka failed, err:%s", err.Error())
+
+		return
 	}
 
 	defer kafka.Exit()
@@ -91,18 +87,11 @@ func main() {
 		userAgent: cfg.Subscription.UserAgent,
 	}
 
-	kafka.Subscriber().Subscribe(
-		cfg.Subscription.Group,
-		map[string]kafka.Handler{
-			cfg.Subscription.Topic: server.handleCommitPushed,
-		},
-	)
-
 	// run
-	run()
+	run(&cfg, &server)
 }
 
-func run() {
+func run(cfg *configuration, s *server) {
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 
@@ -136,5 +125,7 @@ func run() {
 		}
 	}(ctx)
 
-	<-ctx.Done()
+	if err := s.run(&cfg.Subscription, ctx); err != nil {
+		logrus.Errorf("server exited, err:%s", err.Error())
+	}
 }
