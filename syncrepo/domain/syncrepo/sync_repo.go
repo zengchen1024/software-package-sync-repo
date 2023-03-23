@@ -1,7 +1,7 @@
 package syncrepo
 
 type OriginRepo struct {
-	Endpoint string
+	CloneURL string
 	Repo     string
 	Branch   string
 }

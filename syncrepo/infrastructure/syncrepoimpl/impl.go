@@ -30,7 +30,7 @@ func (impl *syncRepo) Sync(origin *syncrepo.OriginRepo) (string, error) {
 	params := []string{
 		impl.shell,
 		impl.workDir, lastCommitTag,
-		origin.Repo, origin.Branch, origin.Endpoint,
+		origin.Repo, origin.Branch, origin.CloneURL,
 		impl.targetRepo + origin.Repo,
 	}
 

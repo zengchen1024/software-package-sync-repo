@@ -50,7 +50,7 @@ func (msg *msgToHandleCommitPushed) genCmd(e *github.PushEvent) (cmd app.CmdToSy
 	repo := e.GetRepo()
 	cmd.Owner = repo.GetOwner().GetLogin()
 	cmd.Repo = repo.GetName()
-	cmd.Endpoint = repo.GetURL()
+	cmd.CloneURL = repo.GetCloneURL()
 
 	if v := strings.Split(e.GetRef(), "/"); len(v) == 0 {
 		err = errors.New("can't parse branch")
